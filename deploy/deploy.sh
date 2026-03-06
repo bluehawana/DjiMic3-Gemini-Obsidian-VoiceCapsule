@@ -89,23 +89,32 @@ RestartSec=10
 WantedBy=multi-user.target
 EOF
 
-# Configure Nginx
+# Configure Nginx (HTTP only first)
 echo "⚙️  Configuring Nginx..."
-cp "$APP_DIR/deploy/nginx.conf" "/etc/nginx/sites-available/$DOMAIN"
+cp "$APP_DIR/deploy/nginx-http.conf" "/etc/nginx/sites-available/$DOMAIN"
 ln -sf "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-enabled/$DOMAIN"
+
+# Remove default site if exists
+rm -f /etc/nginx/sites-enabled/default
 
 # Test Nginx configuration
 nginx -t
+
+# Start services first
+echo "🚀 Starting services..."
+systemctl daemon-reload
+systemctl enable voice-capsule
+systemctl restart voice-capsule
+systemctl restart nginx
+
+# Wait for service to be ready
+sleep 5
 
 # Setup SSL with Let's Encrypt
 echo "🔒 Setting up SSL certificate..."
 certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos --email admin@bluehawana.com
 
-# Start services
-echo "🚀 Starting services..."
-systemctl daemon-reload
-systemctl enable voice-capsule
-systemctl restart voice-capsule
+# Restart Nginx with SSL
 systemctl restart nginx
 
 # Check status
