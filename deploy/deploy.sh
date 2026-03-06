@@ -43,10 +43,20 @@ else
     cd "$APP_DIR"
 fi
 
-# Install Python dependencies
-echo "📦 Installing Python packages..."
+# Install Python dependencies in virtual environment
+echo "📦 Setting up Python virtual environment..."
 cd "$APP_DIR/web-app"
-pip3 install -r requirements.txt
+
+# Install python3-venv if not present
+apt-get install -y python3-venv python3-full
+
+# Create virtual environment
+python3 -m venv venv
+
+# Install packages in venv
+echo "📦 Installing Python packages..."
+./venv/bin/pip install --upgrade pip
+./venv/bin/pip install -r requirements.txt
 
 # Setup environment
 if [ ! -f ".env" ]; then
@@ -71,7 +81,7 @@ Type=simple
 User=www-data
 WorkingDirectory=$APP_DIR/web-app
 Environment="PATH=/usr/local/bin:/usr/bin:/bin"
-ExecStart=/usr/bin/python3 -m uvicorn main:app --host 0.0.0.0 --port 8000
+ExecStart=$APP_DIR/web-app/venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8000
 Restart=always
 RestartSec=10
 
