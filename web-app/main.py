@@ -233,6 +233,59 @@ async def health_check():
     }
 
 
+
+# Notes Management Endpoints
+@app.get("/api/notes")
+async def get_notes():
+    """Get all notes"""
+    # TODO: Implement database or R2 storage retrieval
+    return []
+
+
+@app.get("/api/notes/{note_id}")
+async def get_note(note_id: str):
+    """Get specific note"""
+    # TODO: Implement note retrieval
+    raise HTTPException(404, "Note not found")
+
+
+@app.delete("/api/notes/{note_id}")
+async def delete_note(note_id: str):
+    """Delete a note"""
+    # TODO: Implement note deletion
+    return {"message": "Note deleted"}
+
+
+@app.get("/dashboard")
+async def serve_dashboard():
+    """Serve the dashboard interface"""
+    return FileResponse(str(static_dir / "dashboard.html"))
+
+
+# R2 Storage Integration
+@app.post("/api/backup/r2")
+async def backup_to_r2():
+    """Backup notes to Cloudflare R2"""
+    # TODO: Implement R2 backup
+    # Use boto3 with R2 endpoint
+    return {"message": "Backup initiated"}
+
+
+@app.post("/api/import/r2")
+async def import_from_r2():
+    """Import notes from Cloudflare R2"""
+    # TODO: Implement R2 import
+    return {"message": "Import initiated"}
+
+
+@app.post("/api/export/obsidian")
+async def export_to_obsidian():
+    """Export all notes to Obsidian format"""
+    # TODO: Implement Obsidian export
+    return {"message": "Export complete"}
+
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

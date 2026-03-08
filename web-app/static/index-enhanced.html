@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Capsule - Your Voice Knowledge Base</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e1e4e8;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .nav-item {
+            color: #586069;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: #f6f8fa;
+            color: #667eea;
+        }
+        
+        /* Main Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 24px;
+            padding: 24px 32px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            height: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #24292e;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .category-list {
+            list-style: none;
+        }
+        
+        .category-item {
+            padding: 10px 12px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .category-item:hover {
+            background: #f6f8fa;
+        }
+        
+        .category-item.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .category-count {
+            font-size: 12px;
+            background: #e1e4e8;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .category-item.active .category-count {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        /* Main Content */
+        .main-content {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .upload-section {
+            text-align: center;
+            padding: 48px 24px;
+        }
+        
+        .upload-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #24292e;
+            margin-bottom: 12px;
+        }
+        
+        .upload-subtitle {
+            color: #586069;
+            margin-bottom: 32px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #d1d5da;
+            border-radius: 12px;
+            padding: 64px 32px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafbfc;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f6f8ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: #f0f2ff;
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        
+        .upload-text {
+            font-size: 18px;
+            color: #24292e;
+            margin-bottom: 8px;
+        }
+        
+        .upload-hint {
+            color: #586069;
+            font-size: 14px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 24px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Progress */
+        .progress-section {
+            display: none;
+            margin-top: 32px;
+        }
+        
+        .progress-bar {
+            background: #e1e4e8;
+            border-radius: 8px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .progress-text {
+            text-align: center;
+            color: #586069;
+            font-size: 14px;
+        }
+        
+        /* Result */
+        .result-section {
+            display: none;
+            margin-top: 32px;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .result-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #24292e;
+        }
+        
+        .result-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            padding: 8px 16px;
+            border: 1px solid #d1d5da;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .result-content {
+            background: #f6f8fa;
+            padding: 24px;
+            border-radius: 8px;
+            line-height: 1.8;
+            color: #24292e;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .result-meta {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e1e4e8;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #586069;
+            font-size: 14px;
+        }
+        
+        /* Right Panel */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .panel-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #24292e;
+            margin-bottom: 16px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 16px;
+            background: #f6f8fa;
+            border-radius: 8px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #586069;
+            margin-top: 4px;
+        }
+        
+        .recent-list {
+            list-style: none;
+        }
+        
+        .recent-item {
+            padding: 12px;
+            border-bottom: 1px solid #e1e4e8;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .recent-item:last-child {
+            border-bottom: none;
+        }
+        
+        .recent-item:hover {
+            background: #f6f8fa;
+            border-radius: 6px;
+        }
+        
+        .recent-title {
+            font-size: 14px;
+            color: #24292e;
+            margin-bottom: 4px;
+        }
+        
+        .recent-meta {
+            font-size: 12px;
+            color: #586069;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .error {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            🎙️ Voice Capsule
+        </div>
+        <nav class="nav">
+            <a href="#" class="nav-item active">Upload</a>
+            <a href="#" class="nav-item">Library</a>
+            <a href="#" class="nav-item">Mind Maps</a>
+            <a href="#" class="nav-item">Export</a>
+        </nav>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-title">Categories</div>
+            <ul class="category-list">
+                <li class="category-item active">
+                    <span>📝 All Notes</span>
+                    <span class="category-count">0</span>
+                </li>
+                <li class="category-item">
+                    <span>💼 Meeting</span>
+                    <span class="category-count">0</span>
+                </li>
+                <li class="category-item">
+                    <span>💡 Brainstorm</span>
+                    <span class="category-count">0</span>
+                </li>
+                <li class="category-item">
+                    <span>💬 Discussion</span>
+                    <span class="category-count">0</span>
+                </li>
+                <li class="category-item">
+                    <span>🤔 Mumbling</span>
+                    <span class="category-count">0</span>
+                </li>
+                <li class="category-item">
+                    <span>🧠 Self-Awareness</span>
+                    <span class="category-count">0</span>
+                </li>
+                <li class="category-item">
+                    <span>🚀 Product Ideas</span>
+                    <span class="category-count">0</span>
+                </li>
+                <li class="category-item">
+                    <span>📚 Learning</span>
+                    <span class="category-count">0</span>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="upload-section">
+                <h1 class="upload-title">Transform Voice to Knowledge</h1>
+                <p class="upload-subtitle">Upload your audio recordings and let AI organize them into your personal knowledge base</p>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Drop audio file here or click to browse</div>
+                    <div class="upload-hint">Supports WAV, MP3, M4A, OGG (max 100MB)</div>
+                </div>
+                
+                <input type="file" id="fileInput" accept=".wav,.mp3,.m4a,.ogg">
+                
+                <button class="btn" id="uploadBtn" disabled>Upload & Process</button>
+                
+                <div class="progress-section" id="progressSection">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Processing...</div>
+                </div>
+                
+                <div class="result-section" id="resultSection">
+                    <div class="result-header">
+                        <div class="result-title">✅ Transcription Complete</div>
+                        <div class="result-actions">
+                            <button class="action-btn">📋 Copy</button>
+                            <button class="action-btn">💾 Download</button>
+                            <button class="action-btn">📤 Export to Obsidian</button>
+                        </div>
+                    </div>
+                    <div class="result-content" id="resultText"></div>
+                    <div class="result-meta">
+                        <div class="meta-item">
+                            <span>📊</span>
+                            <span id="wordCount">0 words</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>⏱️</span>
+                            <span id="duration">0:00</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>✓</span>
+                            <span>Saved to Obsidian</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="error" id="errorMessage"></div>
+            </div>
+        </main>
+        
+        <!-- Right Panel -->
+        <aside class="right-panel">
+            <div class="panel-card">
+                <div class="panel-title">Statistics</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Total Notes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Words</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">0h</div>
+                        <div class="stat-label">Audio Time</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-card">
+                <div class="panel-title">Recent Notes</div>
+                <ul class="recent-list">
+                    <li class="recent-item">
+                        <div class="recent-title">No notes yet</div>
+                        <div class="recent-meta">Upload your first recording to get started</div>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>

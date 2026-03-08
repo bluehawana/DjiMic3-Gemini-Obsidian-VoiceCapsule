@@ -5,3 +5,4 @@ aiofiles>=23.2.1
 python-dotenv>=1.0.0
 google-generativeai>=0.3.0
 rich>=13.7.0
+boto3>=1.34.0
